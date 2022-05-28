@@ -58,7 +58,7 @@ export const getSingleProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
   const productId = req.params.id;
-  
+
   try {
     const product = await productModel.findOneAndDelete({
       _id: productId,
@@ -69,7 +69,7 @@ export const deleteProduct = async (req, res) => {
       });
     }
     res.status(200).json({
-      msg:`Successfuly deleted product with ID ${productId}`
+      msg: `Successfuly deleted product with ID ${productId}`,
     });
   } catch (err) {
     console.log(err);
@@ -81,7 +81,7 @@ export const deleteProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   const productId = req.params.id;
-  
+
   try {
     const product = await productModel.findOneAndUpdate(
       {
@@ -92,23 +92,36 @@ export const updateProduct = async (req, res) => {
         new: true,
         runValidators: true,
       }
-      );
-      if (!product) {
-        return res.status(400).json({
-          msg: "failed to find any product",
-        });
-      }
-      res.status(201).json({
-        product,
-      });
-    } catch (err) {
-      console.log(err);
-      res.status(400).json({
+    );
+    if (!product) {
+      return res.status(400).json({
         msg: "failed to find any product",
       });
     }
-  };
-  
-  export const uploadImage = async (req, res) => {
-    
-  };
+    res.status(201).json({
+      product,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      msg: "failed to find any product",
+    });
+  }
+};
+
+export const uploadImage = async (req, res) => {
+  try {
+    let productImage = req.files.image;
+    const imagePath = path.join(
+      __dirname,
+      "./public/uploads/" + `${productImage.name}`
+    );
+    console.log(imagePath);
+    await productImage.mv(imagePath);
+    return res.status(200).json({
+      image: { src: `/uploads/${productImage.name}` },
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
