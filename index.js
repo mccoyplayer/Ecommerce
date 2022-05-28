@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import fileUpload from "express-fileupload";
 import connectToDB from "./db/connect.js";
 import authRouter from "./routes/authRouter.js";
 import userRouter from "./routes/userRouter.js";
@@ -14,6 +15,8 @@ const app = express();
 //middlewares
 app.use(bodyParser.json());
 app.use(morgan('tiny'));
+app.use(fileUpload());
+app.use(express.static('./public'));
 app.use(cookieParser(process.env.JWT_SECRET));
 
 //all routes 
